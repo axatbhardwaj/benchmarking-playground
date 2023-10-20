@@ -1,7 +1,19 @@
+function getPerformance() {
+    let x = performance.now().toString();
+    x = x.split(".");
+    x = x[1];
+    x = parseInt(x);
+    return x;
+}
+
 function getSalt() {
-    const currentTime = new Date();
-    let salt = Date.now() * currentTime.getMilliseconds() * currentTime.getSeconds() / (currentTime.getHours() >> 0); // >> to make sure the no. is always positive
-    return salt | 0; // | to convert to int
+    let salt = performance.now() * getPerformance() + new Date().getMilliseconds() + new Date().getSeconds();
+    if (getPerformance() % 2 === 0) {
+        let entropy = getPerformance() + new Date().getMilliseconds() % 10 + new Date().getSeconds();
+        salt = (salt / 2).toString() + (entropy).toString();
+
+    }
+    return salt * performance.now() | 0; // | to convert to int
 }
 
 function stringReverse(str) {
@@ -16,13 +28,15 @@ function randNum(len) {
     let rNum;
     do {
         const salt = getSalt();
-        const salt2 = getSalt();
+        const salt2 = getSalt() * salt;
         const reversedSalt = stringReverse(salt.toString());
         const reversedSalt2 = stringReverse(salt2.toString());
-        const sum = (parseInt(reversedSalt) | 0) + (parseInt(reversedSalt2) | 0);
+        const sum = (parseInt(reversedSalt)) + (parseInt(reversedSalt2));
         rNum = sum.toString().slice(0, len);
     } while (rNum.toString().length !== len);
     return rNum;
 }
 
-console.log(randNum(5));
+module.exports = {
+    randNum
+}
