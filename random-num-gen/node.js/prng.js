@@ -1,18 +1,22 @@
 function getPerformance() {
     let x = performance.now().toString();
     x = x.split(".");
-    x = x[1];
+    x[0] = stringReverse(x[0]);
+    x = x[1] + x[0];
     x = parseInt(x);
     return x;
 }
 
 function getSalt() {
     let salt = performance.now() * getPerformance() + new Date().getMilliseconds() + new Date().getSeconds();
+    salt = salt.toString();
+    salt = stringReverse(salt);
     if (getPerformance() % 2 === 0) {
         let entropy = getPerformance() + new Date().getMilliseconds() % 10 + new Date().getSeconds();
-        salt = (salt / 2).toString() + (entropy).toString();
-
+        entropy = stringReverse(entropy.toString());
+        salt = (salt / 2).toString() + entropy
     }
+    salt = parseInt(salt);
     return salt * performance.now() | 0; // | to convert to int
 }
 
